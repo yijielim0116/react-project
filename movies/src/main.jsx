@@ -10,7 +10,7 @@ import SiteHeader from './components/siteHeader'
 
 const App = () => {
   return (
-    <BrowserRouter>
+        <BrowserRouter>
       <SiteHeader />
       <Routes>
         <Route path="/reviews/:id" element={ <MovieReviewPage /> } />
@@ -20,7 +20,6 @@ const App = () => {
         <Route path="*" element={ <Navigate to="/" /> } />
       </Routes>
     </BrowserRouter>
-
   );
 };
 
