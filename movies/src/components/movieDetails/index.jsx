@@ -8,7 +8,8 @@ import NavigationIcon from "@mui/icons-material/Navigation";
 import Fab from "@mui/material/Fab";
 import Typography from "@mui/material/Typography";
 import Drawer from "@mui/material/Drawer";
-import MovieReviews from "../movieReviews"
+import MovieReviews from "../movieReviews";
+
 
 
 const root = {
@@ -23,6 +24,7 @@ const chip = { margin: 0.5 };
 
 const MovieDetails = ({ movie }) => {  // Don't miss this!
 const [drawerOpen, setDrawerOpen] = useState(false);
+
 
   return (
     <>
@@ -59,6 +61,16 @@ const [drawerOpen, setDrawerOpen] = useState(false);
         />
         <Chip label={`Released: ${movie.release_date}`} />
       </Paper>
+      <Paper component="ul" sx={{...root}}>
+        <li>
+          <Chip label="Production Countries" sx={{...chip}} color="primary" />
+        </li>
+        {movie.production_countries.map((c) => (
+        <li key={c.iso_3166_1}>
+            <Chip label={c.name} sx={{ ...chip }} />
+        </li>
+      ))}
+      </Paper>
             <Fab
         color="secondary"
         variant="extended"
@@ -69,6 +81,7 @@ const [drawerOpen, setDrawerOpen] = useState(false);
           right: '1em'
         }}
       >
+
         <NavigationIcon />
         Reviews
       </Fab>
@@ -77,6 +90,7 @@ const [drawerOpen, setDrawerOpen] = useState(false);
       </Drawer>
 
       </>
+      
   );
 };
 export default MovieDetails ;
