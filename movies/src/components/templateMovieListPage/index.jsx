@@ -11,13 +11,13 @@ function MovieListPageTemplate({ movies, title, selectFavorite }) {
 
   let displayedMovies = [];
 
-if (movies && Array.isArray(movies)) {
-  displayedMovies = movies
-    .filter((m) =>
-      m.title.toLowerCase().includes(nameFilter.toLowerCase())
-    )
-    .filter((m) => (genreId > 0 ? m.genre_ids.includes(genreId) : true));
-}
+  if (movies && Array.isArray(movies)) {
+    displayedMovies = movies
+        .filter((m) =>
+        m.title.toLowerCase().includes(nameFilter.toLowerCase())
+        )
+        .filter((m) => (genreId > 0 ? m.genre_ids.includes(genreId) : true));
+  }
 
   const handleChange = (type, value) => {
     if (type === "name") setNameFilter(value);
