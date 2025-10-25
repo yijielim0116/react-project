@@ -7,7 +7,7 @@ import Spinner from "../components/spinner";
 
 const UpcomingMoviesPage = () => {
   const { data, error, isLoading, isError } = useQuery({
-    queryKey: ["upcoming"],
+    queryKey: ["trending"],
     queryFn: getUpcomingMovies,
     staleTime: 5 * 60 * 1000,
   });
@@ -17,7 +17,7 @@ const UpcomingMoviesPage = () => {
 
   return (
     <PageTemplate
-      title="Upcoming Movies"
+      title="Trending This Week"
       movies={data.results}
       action={(movie) => <PlaylistAdd movie={movie} />}  // or your favorite button if you want
     />
