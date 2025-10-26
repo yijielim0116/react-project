@@ -17,7 +17,6 @@ const UpcomingMoviesPage = () => {
 
   const movies = data.results ?? [];
 
-  // ✅ Now it's safe to use movies here
   const favorites = movies.filter((m) => m.favorite);
   localStorage.setItem("favorites", JSON.stringify(favorites));
 
