@@ -8,7 +8,7 @@ import PlaylistAdd from "../components/cardIcons/playlistAdd";
 
 const TrendingThisWeekPage = () => {
   const { data, error, isLoading, isError } = useQuery({
-    queryKey: ["trendingThisWeek"],
+    queryKey: ["trendingToday"],
     queryFn: getTrendingMovies,
   });
 
@@ -28,7 +28,7 @@ const TrendingThisWeekPage = () => {
 
   return (
     <PageTemplate
-      title="Trending This Week"
+      title="Trending Today"
       movies={movies}
       action={(movie) => (
         <>
