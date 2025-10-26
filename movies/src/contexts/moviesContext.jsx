@@ -17,15 +17,14 @@ const MoviesContextProvider = (props) => {
     setFavorites(newFavorites);
   };
 
+   const removeFromFavorites = (movie) => {
+    setFavorites(favorites.filter((mId) => mId !== movie.id));
+  };
+
   const addReview = (movie, review) => {
     setMyReviews({ ...myReviews, [movie.id]: review });
   };
 
-  const removeFromFavorites = (movie) => {
-    setFavorites(favorites.filter((mId) => mId !== movie.id));
-  };
-
-  // 👇 NEW FUNCTION for Must Watch
   const addToMustWatch = (movie) => {
     if (!mustWatch.includes(movie.id)) {
       const newMustWatch = [...mustWatch, movie.id];

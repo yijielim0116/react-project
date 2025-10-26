@@ -58,30 +58,35 @@ export default function MovieCard({ movie,action }) {
       />
       <CardContent>
         <Grid container>
-          <Grid size={{xs: 6}}>
-            <Typography variant="h6" component="p">
+          <Grid item xs={6}>
+           <Typography variant="h6" component="p">
               <CalendarIcon fontSize="small" />
-              {movie.release_date}
+              {" "}
+              {movie.release_date
+                ? new Date(movie.release_date).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "2-digit",
+                  })
+                : "N/A"}
             </Typography>
           </Grid>
-          <Grid size={{xs: 6}}>
+          <Grid item xs={6}>
             <Typography variant="h6" component="p">
               <StarRateIcon fontSize="small" />
-              {"  "} {movie.vote_average}{" "}
+              {"  "} {movie.vote_average?.toFixed?.(1) ?? movie.vote_average}
             </Typography>
           </Grid>
         </Grid>
       </CardContent>
-            <CardActions disableSpacing>
-      
-        {action(movie)}
-      
+
+      <CardActions disableSpacing>
+        {action ? action(movie) : null}
         <Link to={`/movies/${movie.id}`}>
-          <Button variant="outlined" size="medium" color="primary">
+          <Button variant="outlined" size="medium">
             More Info ...
           </Button>
         </Link>
-        
       </CardActions>
 
     </Card>

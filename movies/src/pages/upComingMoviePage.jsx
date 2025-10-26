@@ -1,25 +1,36 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getUpcomingMovies } from "../api/tmdb-api";
-import PageTemplate from "../components/templateMovieListPage";
-import PlaylistAdd from "../components/cardIcons/playlistAdd";
 import Spinner from "../components/spinner";
+import PageTemplate from "../components/templateMovieListPage";
+import { getUpcomingMovies } from "../api/tmdb-api";
+import AddToFavoritesIcon from "../components/cardIcons/addToFavorites";
+import PlaylistAdd from "../components/cardIcons/playlistAdd";
 
 const UpcomingMoviesPage = () => {
   const { data, error, isLoading, isError } = useQuery({
-    queryKey: ["trending"],
+    queryKey: ["upcoming"],
     queryFn: getUpcomingMovies,
-    staleTime: 5 * 60 * 1000,
   });
 
   if (isLoading) return <Spinner />;
   if (isError) return <h1>{error.message}</h1>;
 
+  const movies = data.results ?? [];
+
+  // ✅ Now it's safe to use movies here
+  const favorites = movies.filter((m) => m.favorite);
+  localStorage.setItem("favorites", JSON.stringify(favorites));
+
   return (
     <PageTemplate
-      title="Trending This Week"
-      movies={data.results}
-      action={(movie) => <PlaylistAdd movie={movie} />}  // or your favorite button if you want
+      title="Upcoming Movies"
+      movies={movies}
+      action={(movie) => (
+        <>
+          <AddToFavoritesIcon movie={movie} />
+          <PlaylistAdd movie={movie} />
+        </>
+      )}
     />
   );
 };
