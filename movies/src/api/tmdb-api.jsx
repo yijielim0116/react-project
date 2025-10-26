@@ -159,3 +159,62 @@ export const getNowPlayingMovies = ({ queryKey }) => {
   });
 };
 
+export const getMovieCredits = ({ queryKey }) => {
+  const [, { id }] = queryKey;
+  return fetch(
+    `https://api.themoviedb.org/3/movie/${id}/credits?api_key=${import.meta.env.VITE_TMDB_KEY}&language=en-US`
+  ).then(async (r) => {
+    if (!r.ok) throw new Error((await r.json()).status_message || "Something went wrong");
+    return r.json();
+  });
+};
+
+export const getMovieRecommendations = ({ queryKey }) => {
+  const [, { id, page = 1 }] = queryKey;
+  return fetch(
+    `https://api.themoviedb.org/3/movie/${id}/recommendations?api_key=${import.meta.env.VITE_TMDB_KEY}&language=en-US&page=${page}`
+  ).then(async (r) => {
+    if (!r.ok) throw new Error((await r.json()).status_message || "Something went wrong");
+    return r.json();
+  });
+};
+
+export const getSimilarMovies = ({ queryKey }) => {
+  const [, { id, page = 1 }] = queryKey;
+  return fetch(
+    `https://api.themoviedb.org/3/movie/${id}/similar?api_key=${import.meta.env.VITE_TMDB_KEY}&language=en-US&page=${page}`
+  ).then(async (r) => {
+    if (!r.ok) throw new Error((await r.json()).status_message || "Something went wrong");
+    return r.json();
+  });
+};
+
+export const getPersonDetails = ({ queryKey }) => {
+  const [, { id }] = queryKey;
+  return fetch(
+    `https://api.themoviedb.org/3/person/${id}?api_key=${import.meta.env.VITE_TMDB_KEY}&language=en-US`
+  ).then(async (r) => {
+    if (!r.ok) throw new Error((await r.json()).status_message || "Something went wrong");
+    return r.json();
+  });
+};
+
+export const getPersonCombinedCredits = ({ queryKey }) => {
+  const [, { id }] = queryKey;
+  return fetch(
+    `https://api.themoviedb.org/3/person/${id}/combined_credits?api_key=${import.meta.env.VITE_TMDB_KEY}&language=en-US`
+  ).then(async (r) => {
+    if (!r.ok) throw new Error((await r.json()).status_message || "Something went wrong");
+    return r.json();
+  });
+};
+
+export const getCollectionDetails = ({ queryKey }) => {
+  const [, { id }] = queryKey;
+  return fetch(
+    `https://api.themoviedb.org/3/collection/${id}?api_key=${import.meta.env.VITE_TMDB_KEY}&language=en-US`
+  ).then(async (r) => {
+    if (!r.ok) throw new Error((await r.json()).status_message || "Something went wrong");
+    return r.json();
+  });
+};

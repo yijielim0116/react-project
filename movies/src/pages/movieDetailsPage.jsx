@@ -1,43 +1,38 @@
 import React from "react";
-import { useParams } from 'react-router';
-import MovieDetails from "../components/movieDetails/";
+import { useParams } from "react-router";
+import { useQuery } from "@tanstack/react-query";
+
 import PageTemplate from "../components/templateMoviePage";
-import useMovie from "../hooks/useMovie";
-import { getMovie } from '../api/tmdb-api'
-import { useQuery } from '@tanstack/react-query';
-import Spinner from '../components/spinner'
+import MovieDetails from "../components/movieDetails";
+import Spinner from "../components/spinner";
 
-const MoviePage = (props) => {
+import { getMovie } from "../api/tmdb-api";
+
+const MoviePage = () => {
   const { id } = useParams();
-    const { data: movie, error, isPending, isError  } = useQuery({
-    queryKey: ['movie', {id: id}],
+
+  const {
+    data: movie,
+    error,
+    isPending,
+    isError,
+  } = useQuery({
+    queryKey: ["movie", { id }],
     queryFn: getMovie,
-  })
+    staleTime: 360000,
+  });
 
-  if (isPending) {
-    return <Spinner />;
-  }
+  if (isPending) return <Spinner />;
+  if (isError) return <h1>{error.message}</h1>;
 
-  if (isError) {
-    return <h1>{error.message}</h1>;
-  }
-
+  if (!movie) return <p>Waiting for movie details…</p>;
 
   return (
-    <>
-      {movie ? (
-        <>
-          <PageTemplate movie={movie}>
-            <MovieDetails movie={movie} />
-          </PageTemplate>
-        </>
-      ) : (
-        <p>Waiting for movie details</p>
-      )}
-    </>
+    <PageTemplate movie={movie}>
+      <MovieDetails movie={movie} />
+    </PageTemplate>
   );
 };
 
 export default MoviePage;
-
 
