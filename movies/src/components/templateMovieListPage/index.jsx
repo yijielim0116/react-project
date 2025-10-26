@@ -22,18 +22,17 @@ export default function MovieListPageTemplate({
   title,
   movies = [],
   action,
-  page,          // optional: pass if the page is API-paginated
-  totalPages,    // optional
-  onPageChange,  // optional
+  page,          
+  totalPages,    
+  onPageChange,  
 }) {
-  // Controlled filter state (driven by the FilterCard)
+  
   const [titleFilter, setTitleFilter] = React.useState("");
-  const [genreFilter, setGenreFilter] = React.useState("0"); // "0" means All
+  const [genreFilter, setGenreFilter] = React.useState("0"); 
   const [minRating, setMinRating] = React.useState(0);
   const [yearRange, setYearRange] = React.useState([1980, THIS_YEAR]);
   const [sortKey, setSortKey] = React.useState("popularity");
 
-  // one unified handler the FilterCard will call
   const handleFilterChange = (type, value) => {
     switch (type) {
       case "name":
@@ -46,7 +45,7 @@ export default function MovieListPageTemplate({
         setMinRating(Number(value));
         break;
       case "year":
-        setYearRange(value); // [min,max]
+        setYearRange(value); 
         break;
       case "sort":
         setSortKey(value);
@@ -56,32 +55,26 @@ export default function MovieListPageTemplate({
     }
   };
 
-  // Compute displayed list
   const displayed = React.useMemo(() => {
     let list = Array.isArray(movies) ? movies.slice() : [];
 
-    // title
     if (titleFilter.trim()) {
       const q = titleFilter.toLowerCase();
       list = list.filter((m) => (m.title || "").toLowerCase().includes(q));
     }
 
-    // genre
     const gId = Number(genreFilter);
     if (gId > 0) {
       list = list.filter((m) => m.genre_ids?.includes(gId));
     }
 
-    // min rating
     list = list.filter((m) => (m.vote_average ?? 0) >= minRating);
 
-    // year range
     list = list.filter((m) => {
       const y = Number((m.release_date || "").slice(0, 4));
       return Number.isFinite(y) && y >= yearRange[0] && y <= yearRange[1];
     });
 
-    // sort
     list.sort(sorters[sortKey] ?? sorters.popularity);
     return list;
   }, [movies, titleFilter, genreFilter, minRating, yearRange, sortKey]);
@@ -90,9 +83,9 @@ export default function MovieListPageTemplate({
     <Container maxWidth="xl" sx={{ mt: 3, mb: 5 }}>
       <Header title={title} />
 
-      <Grid container spacing={2}>
+       <Grid container spacing={2} alignItems="flex-start">
         {/* Left column: Filter panel */}
-        <Grid item xs={12} md={3} lg={2}>
+        <Grid item xs={12} sm={4} md={3} lg={2}>
           <FilterCard
             onUserInput={handleFilterChange}
             titleFilter={titleFilter}
@@ -104,7 +97,7 @@ export default function MovieListPageTemplate({
         </Grid>
 
         {/* Right column: Movie list */}
-        <Grid item xs={12} md={9} lg={10}>
+        <Grid item xs={12} sm={8} md={9} lg={10}>
           <MovieList movies={displayed} action={action} />
 
           {/* Optional pagination bar (only renders if props are provided) */}

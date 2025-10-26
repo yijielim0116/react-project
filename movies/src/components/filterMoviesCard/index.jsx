@@ -1,26 +1,12 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import {
-  Card,
-  CardContent,
-  CardMedia,
-  Typography,
-  TextField,
-  InputLabel,
-  MenuItem,
-  FormControl,
-  Select,
-  Slider,
-  Box,
-  Divider,
-} from "@mui/material";
+import {Card,CardContent,CardMedia,Typography,TextField,InputLabel,MenuItem,FormControl,Select,Slider,Box,Divider,} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import SortIcon from "@mui/icons-material/Sort";
 import StarRateIcon from "@mui/icons-material/StarRate";
 import EventIcon from "@mui/icons-material/Event";
 
 import { getGenres } from "../../api/tmdb-api";
-// 👉 Put your image in /src/images/ (or adjust the path below)
 import filterImg from "../../images/Watch-Free-Hero-2048x1152-1.webp";
 
 const formControl = {
@@ -32,21 +18,18 @@ const formControl = {
 const thisYear = new Date().getFullYear();
 
 export default function FilterMoviesCard({
-  // controlled values (with sensible defaults)
   titleFilter = "",
   genreFilter = "0",
   minRating = 0,
   yearRange = [1980, thisYear],
   sortKey = "popularity",
 
-  // one unified change handler (type, value)
   onUserInput = () => {},
 }) {
-  // Genres
   const { data, error, isPending, isError } = useQuery({
     queryKey: ["genres"],
     queryFn: getGenres,
-    staleTime: 24 * 60 * 60 * 1000, // 1 day
+    staleTime: 24 * 60 * 60 * 1000, 
   });
 
   if (isPending) {
@@ -73,11 +56,10 @@ export default function FilterMoviesCard({
     genres.unshift({ id: 0, name: "All" });
   }
 
-  // Handlers
   const handleText = (e) => onUserInput("name", e.target.value);
   const handleGenre = (e) => onUserInput("genre", String(e.target.value));
   const handleRating = (_e, v) => onUserInput("rating", Number(v));
-  const handleYear = (_e, v) => onUserInput("year", v); // [min,max]
+  const handleYear = (_e, v) => onUserInput("year", v); 
   const handleSort = (e) => onUserInput("sort", e.target.value);
 
   return (
@@ -88,7 +70,6 @@ export default function FilterMoviesCard({
           Filter Movies
         </Typography>
 
-        {/* Search */}
         <TextField
           sx={formControl}
           label="Search by title"
@@ -98,7 +79,6 @@ export default function FilterMoviesCard({
           fullWidth
         />
 
-        {/* Genre */}
         <FormControl sx={formControl} variant="filled" fullWidth>
           <InputLabel id="genre-label">Genre</InputLabel>
           <Select
@@ -118,7 +98,6 @@ export default function FilterMoviesCard({
 
         <Divider sx={{ my: 1.5 }} />
 
-        {/* Rating */}
         <Box sx={{ px: 1, mb: 1 }}>
           <Typography variant="subtitle2" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <StarRateIcon fontSize="small" /> Rating (min): {minRating.toFixed(1)}
@@ -134,7 +113,6 @@ export default function FilterMoviesCard({
           />
         </Box>
 
-        {/* Release year (range) */}
         <Box sx={{ px: 1, mb: 1 }}>
           <Typography variant="subtitle2" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <EventIcon fontSize="small" /> Release Year: {yearRange[0]} – {yearRange[1]}
@@ -149,8 +127,7 @@ export default function FilterMoviesCard({
             onChange={handleYear}
           />
         </Box>
-
-        {/* Sort */}
+ 
         <FormControl sx={formControl} variant="filled" fullWidth>
           <InputLabel id="sort-by-label">Sort by</InputLabel>
           <Select
@@ -168,20 +145,12 @@ export default function FilterMoviesCard({
         </FormControl>
       </CardContent>
 
-      {/* Background image */}
       <CardMedia
         component="img"
         image={filterImg}
         alt="Filter background"
         sx={{ height: { xs: 150, md: 240 }, objectFit: "cover" }}
       />
-
-      <CardContent>
-        <Typography variant="h6" component="h2" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <SearchIcon />
-          Filter the movies.
-        </Typography>
-      </CardContent>
     </Card>
   );
 }
