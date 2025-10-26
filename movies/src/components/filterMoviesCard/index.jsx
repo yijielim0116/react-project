@@ -1,109 +1,185 @@
-import React, {useState, useEffect}  from "react";
-import Card from "@mui/material/Card";
-import CardMedia from "@mui/material/CardMedia";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import TextField from "@mui/material/TextField";
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import {
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+  TextField,
+  InputLabel,
+  MenuItem,
+  FormControl,
+  Select,
+  Slider,
+  Box,
+  Divider,
+} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
+import SortIcon from "@mui/icons-material/Sort";
+import StarRateIcon from "@mui/icons-material/StarRate";
+import EventIcon from "@mui/icons-material/Event";
+
 import { getGenres } from "../../api/tmdb-api";
-import img from '../../images/Watch-Free-Hero-2048x1152-1.webp';
-import { useQuery } from '@tanstack/react-query';
-import Spinner from '../spinner';
+// 👉 Put your image in /src/images/ (or adjust the path below)
+import filterImg from "../../images/Watch-Free-Hero-2048x1152-1.webp";
 
-const formControl = 
-  {
-    margin: 1,
-    minWidth: "90%",
-    backgroundColor: "rgb(255, 255, 255)"
-  };
+const formControl = {
+  my: 1,
+  minWidth: "90%",
+  backgroundColor: "rgb(255, 255, 255)",
+};
 
-export default function FilterMoviesCard(props) {
-      const { data, error, isPending, isError } = useQuery({
-    queryKey: ['genres'],
+const thisYear = new Date().getFullYear();
+
+export default function FilterMoviesCard({
+  // controlled values (with sensible defaults)
+  titleFilter = "",
+  genreFilter = "0",
+  minRating = 0,
+  yearRange = [1980, thisYear],
+  sortKey = "popularity",
+
+  // one unified change handler (type, value)
+  onUserInput = () => {},
+}) {
+  // Genres
+  const { data, error, isPending, isError } = useQuery({
+    queryKey: ["genres"],
     queryFn: getGenres,
+    staleTime: 24 * 60 * 60 * 1000, // 1 day
   });
 
   if (isPending) {
-    return <Spinner />;
+    return (
+      <Card variant="outlined" sx={{ backgroundColor: "rgb(204, 204, 0)" }}>
+        <CardContent>
+          <Typography variant="h6">Loading filters…</Typography>
+        </CardContent>
+      </Card>
+    );
   }
-
   if (isError) {
-    return <h1>{error.message}</h1>;
+    return (
+      <Card variant="outlined" sx={{ backgroundColor: "rgb(204, 204, 0)" }}>
+        <CardContent>
+          <Typography color="error">{error.message}</Typography>
+        </CardContent>
+      </Card>
+    );
   }
-  const genres = data.genres;
-  if (genres[0].name !== "All"){
-    genres.unshift({ id: "0", name: "All" });
+
+  const genres = [...(data?.genres ?? [])];
+  if (!genres.find((g) => g.id === 0)) {
+    genres.unshift({ id: 0, name: "All" });
   }
 
-  const handleChange = (e, type, value) => {
-    e.preventDefault();
-    props.onUserInput(type, value); 
-  };
-
-  const handleTextChange = (e, props) => {
-    handleChange(e, "name", e.target.value);
-  };
-
-  const handleGenreChange = (e) => {
-    handleChange(e, "genre", e.target.value);
-  };
+  // Handlers
+  const handleText = (e) => onUserInput("name", e.target.value);
+  const handleGenre = (e) => onUserInput("genre", String(e.target.value));
+  const handleRating = (_e, v) => onUserInput("rating", Number(v));
+  const handleYear = (_e, v) => onUserInput("year", v); // [min,max]
+  const handleSort = (e) => onUserInput("sort", e.target.value);
 
   return (
-    <Card 
-      sx={{
-        backgroundColor: "rgb(204, 204, 0)"
-      }} 
-      variant="outlined">
+    <Card variant="outlined" sx={{ backgroundColor: "rgb(204, 204, 0)" }}>
       <CardContent>
-        <Typography variant="h5" component="h1">
+        <Typography variant="h5" component="h1" sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
           <SearchIcon fontSize="large" />
-          Filter the movies.
+          Filter Movies
         </Typography>
-            <TextField
-              sx={{...formControl}}
-              id="filled-search"
-              label="Search field"
-              type="search"
-              variant="filled"
-              value={props.titleFilter}
-              onChange={handleTextChange}
-            />
 
+        {/* Search */}
+        <TextField
+          sx={formControl}
+          label="Search by title"
+          variant="filled"
+          value={titleFilter}
+          onChange={handleText}
+          fullWidth
+        />
 
-        <FormControl sx={{...formControl}}>
+        {/* Genre */}
+        <FormControl sx={formControl} variant="filled" fullWidth>
           <InputLabel id="genre-label">Genre</InputLabel>
-            <Select
-              labelId="genre-label"
-              id="genre-select"
-              defaultValue=""
-              value={props.genreFilter}
-              onChange={handleGenreChange}
-            >
+          <Select
+            labelId="genre-label"
+            id="genre-select"
+            value={genreFilter}
+            label="Genre"
+            onChange={handleGenre}
+          >
+            {genres.map((g) => (
+              <MenuItem key={g.id} value={String(g.id)}>
+                {g.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-            {genres.map((genre) => {
-              return (
-                <MenuItem key={genre.id} value={genre.id}>
-                  {genre.name}
-                </MenuItem>
-              );
-            })}
+        <Divider sx={{ my: 1.5 }} />
+
+        {/* Rating */}
+        <Box sx={{ px: 1, mb: 1 }}>
+          <Typography variant="subtitle2" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <StarRateIcon fontSize="small" /> Rating (min): {minRating.toFixed(1)}
+          </Typography>
+          <Slider
+            size="small"
+            min={0}
+            max={10}
+            step={0.5}
+            value={minRating}
+            valueLabelDisplay="auto"
+            onChange={handleRating}
+          />
+        </Box>
+
+        {/* Release year (range) */}
+        <Box sx={{ px: 1, mb: 1 }}>
+          <Typography variant="subtitle2" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <EventIcon fontSize="small" /> Release Year: {yearRange[0]} – {yearRange[1]}
+          </Typography>
+          <Slider
+            size="small"
+            min={1970}
+            max={thisYear}
+            step={1}
+            value={yearRange}
+            valueLabelDisplay="auto"
+            onChange={handleYear}
+          />
+        </Box>
+
+        {/* Sort */}
+        <FormControl sx={formControl} variant="filled" fullWidth>
+          <InputLabel id="sort-by-label">Sort by</InputLabel>
+          <Select
+            labelId="sort-by-label"
+            id="sort-by"
+            value={sortKey}
+            label="Sort by"
+            onChange={handleSort}
+            startAdornment={<SortIcon sx={{ mr: 1 }} />}
+          >
+            <MenuItem value="popularity">Popularity</MenuItem>
+            <MenuItem value="rating">Rating</MenuItem>
+            <MenuItem value="release">Release date</MenuItem>
           </Select>
         </FormControl>
       </CardContent>
+
+      {/* Background image */}
       <CardMedia
-        sx={{ height: 300 }}
-        image={img}
-        title="Filter"
+        component="img"
+        image={filterImg}
+        alt="Filter background"
+        sx={{ height: { xs: 150, md: 240 }, objectFit: "cover" }}
       />
+
       <CardContent>
-        <Typography variant="h5" component="h1">
-          <SearchIcon fontSize="large" />
+        <Typography variant="h6" component="h2" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <SearchIcon />
           Filter the movies.
-          <br />
         </Typography>
       </CardContent>
     </Card>
