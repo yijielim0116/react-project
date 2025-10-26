@@ -10,7 +10,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { getGenres } from "../../api/tmdb-api";
-import img from '../../images/pexels-dziana-hasanbekava-5480827.jpg';
+import img from '../../images/Watch-Free-Hero-2048x1152-1.webp';
 import { useQuery } from '@tanstack/react-query';
 import Spinner from '../spinner';
 
@@ -51,9 +51,6 @@ export default function FilterMoviesCard(props) {
   const handleGenreChange = (e) => {
     handleChange(e, "genre", e.target.value);
   };
-
-
-
 
   return (
     <Card 
