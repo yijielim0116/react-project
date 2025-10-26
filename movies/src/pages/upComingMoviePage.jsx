@@ -1,6 +1,7 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import Spinner from "../components/spinner";
+import SkeletonGrid from "../components/skeletons/SkeletonGrid";  
 import PageTemplate from "../components/templateMovieListPage";
 import { getUpcomingMovies } from "../api/tmdb-api";
 import AddToFavoritesIcon from "../components/cardIcons/addToFavorites";
@@ -12,7 +13,7 @@ const UpcomingMoviesPage = () => {
     queryFn: getUpcomingMovies,
   });
 
-  if (isLoading) return <Spinner />;
+  if (isLoading) return <SkeletonGrid />;
   if (isError) return <h1>{error.message}</h1>;
 
   const movies = data.results ?? [];

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import Spinner from "../components/spinner";
+import SkeletonGrid from "../components/skeletons/SkeletonGrid";
 import PageTemplate from "../components/templateMovieListPage";
 import { getNowPlayingMovies } from "../api/tmdb-api";
 import AddToFavoritesIcon from "../components/cardIcons/addToFavorites";
@@ -12,22 +12,17 @@ const NowPlayingMovies = () => {
   const [page, setPage] = useState(1);
 
   const { data, error, isLoading, isError } = useQuery({
-    queryKey: ["nowPlaying", { page }],
-    queryFn: getNowPlayingMovies,
+    queryKey: ["nowPlaying", page],
+    queryFn: () => getNowPlayingMovies({ page }),  
     keepPreviousData: true,
     staleTime: 360000,
   });
 
-  if (isLoading) return <Spinner />;
+  if (isLoading) return <SkeletonGrid />;
   if (isError) return <h1>{error.message}</h1>;
 
   const movies = data?.results ?? [];
   const totalPages = Math.min(data?.total_pages ?? 1, 500);
-
-  const handlePageChange = (_e, value) => {
-    setPage(value);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
 
   return (
     <>
@@ -46,7 +41,10 @@ const NowPlayingMovies = () => {
           page={page}
           count={totalPages}
           color="primary"
-          onChange={handlePageChange}
+          onChange={(_, p) => {
+            setPage(p);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
         />
       </Box>
     </>
